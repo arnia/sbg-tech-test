@@ -1,0 +1,94 @@
+$eventTypeBackground: #0b286c;
+
+.liveEventList {
+  //margin: 0 10px
+}
+
+.eventTypeHeader {
+  background: $eventTypeBackground;
+  display: flex;
+  padding: 20px 24px;
+
+  .eventTypeHeaderTitle {
+    color: white;
+    flex: 0 0 auto;
+    font-size: 20px;
+    line-height: 37px;
+  }
+
+  .toggle {
+    margin-left: 20px;
+    color: white;
+    font-size: 10px;
+
+    .primaryMarketCheckbox {
+      color: #daeaca;
+    }
+  }
+
+  .boostCounterWrapper {
+    flex: 0 0 auto;
+
+    .boostCounter {
+      background: #ffe700;
+      font-size: 20px;
+      color: $eventTypeBackground;
+      padding: 5px 8px;
+      border-radius: 8px;
+    }
+  }
+}
+
+.eventWrapper {
+  border: 1px solid #b4c0d4;
+  border-top: none;
+  border-bottom: 2px solid #b4c0d4;
+}
+
+.eventInfo {
+  height: 60px;
+  display: flex;
+  background: #ffffff;
+  align-items: center;
+
+  .eventName {
+    font-weight: bold;
+  }
+
+  .eventStartTime {
+    padding: 0 20px 0 10px;
+  }
+
+  .started {
+    color: #0d983a;
+  }
+}
+
+.eventMarket {
+  .marketName {
+    background: #cfdaea;
+    color: #323565;
+    font-weight: bold;
+    padding: 10px;
+    cursor: pointer;
+  }
+
+  .marketOutcome {
+    display: flex;
+    border-bottom: 1px solid gray;
+    font-weight: bold;
+
+    .outcomeName {
+      padding: 10px;
+      color: #464646;
+      flex: 1 0 auto;
+    }
+    .outcomePrice {
+      padding: 10px;
+      background: #f3f6f9;
+      color: #da1c2d;
+      flex: 0 0 60px;
+      text-align: center;
+    }
+  }
+}

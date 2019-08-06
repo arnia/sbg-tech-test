@@ -2,7 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { SocketSendAction, SocketStartAction } from '../../redux/actions';
-import { eventsSelector, websocketConnectedSelector } from '../../redux/selectors';
+import { websocketConnectedSelector } from '../../redux/selectors';
+import skybetLogo from '../../assets/skybet.png'
 
 import LiveEventsList from './LiveEventList';
 import homeStyles from './Home.module.scss';
@@ -10,7 +11,7 @@ import homeStyles from './Home.module.scss';
 interface IHomeProps {
   liveEvents?: any[];
   websocketConnected?: boolean;
-  subscribeToLiveEvents: () => void;
+  subscribeToLiveEvents: (primaryMarkets?: boolean) => void;
   startWebsocketConnection: () => void;
 }
 
@@ -47,20 +48,30 @@ class Home extends React.Component<IHomeProps, IHomeState> {
   }
 
   public render() {
-    const { liveEvents } = this.props;
-    console.log('live', liveEvents);
     return (
       <div className={homeStyles.homeContainer}>
-        <LiveEventsList events={liveEvents}/>
+        <div className={homeStyles.header}>
+          <img src={skybetLogo} alt="skybet-logo"/>
+        </div>
+        <LiveEventsList
+          togglePrimaryMarketDisplay={this.togglePrimaryMarketDisplay}
+        />
       </div>
     )
+  }
+
+  private togglePrimaryMarketDisplay = (displayPrimaryMarkets: boolean) => {
+    this.props.subscribeToLiveEvents(displayPrimaryMarkets);
   }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    subscribeToLiveEvents: () => {
-      dispatch(new SocketSendAction({}));
+    subscribeToLiveEvents: (primaryMarkets: boolean = false) => {
+      dispatch(new SocketSendAction({
+        type: "getLiveEvents",
+        primaryMarkets
+      }));
     },
     startWebsocketConnection: () => {
       dispatch(new SocketStartAction({}))
@@ -71,7 +82,6 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
 
 const mapStateToProps = (state: any, ownProps: any) => {
   return {
-    liveEvents: eventsSelector()(state),
     websocketConnected: websocketConnectedSelector()(state)
   };
 };

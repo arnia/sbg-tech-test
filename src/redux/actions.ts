@@ -1,24 +1,18 @@
 export const ActionTypes = {
-  'TEST': 'TEST',
-  'TEST_SUCCESS': 'TEST_SUCCESS',
+  'TOGGLE_PRIMARY_MARKET_DISPLAY': 'TOGGLE_PRIMARY_MARKET_DISPLAY',
+  'GET_PRIMARY_MARKETS': 'GET_PRIMARY_MARKETS',
+  'GET_PRIMARY_MARKETS_SUCCESS': 'GET_PRIMARY_MARKETS_SUCCESS',
+  'GET_OUTCOMES': 'GET_OUTCOMES',
   'SOCKET_SEND': 'SOCKET_SEND',
   'START_WEBSOCKET': 'START_WEBSOCKET',
   'CLOSE_WEBSOCKET': 'CLOSE_WEBSOCKET',
 };
 
-export class TestAction {
-  public readonly type = ActionTypes.TEST;
+export class TogglePrimaryMarketDisplayAction {
+  public readonly type = ActionTypes.TOGGLE_PRIMARY_MARKET_DISPLAY;
 
   constructor(
-    public payload: any
-  ) {}
-}
-
-export class TestSuccessAction {
-  public readonly type = ActionTypes.TEST_SUCCESS;
-
-  constructor(
-    public payload: any
+    public payload: boolean
   ) {}
 }
 
@@ -40,6 +34,22 @@ export class SocketStartAction {
 
 export class SocketCloseAction {
   public readonly type = ActionTypes.CLOSE_WEBSOCKET;
+
+  constructor(
+    public payload: any
+  ) {}
+}
+
+export class GetPrimaryMarketsAction {
+  public readonly type = ActionTypes.GET_PRIMARY_MARKETS;
+
+  constructor(
+    public payload: any[]
+  ) {}
+}
+
+export class GetOutcomesAction {
+  public readonly type = ActionTypes.GET_OUTCOMES;
 
   constructor(
     public payload: any
