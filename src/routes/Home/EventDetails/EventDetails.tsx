@@ -1,22 +1,35 @@
 import React from 'react';
 import styles from './EventDetails.module.scss';
-import eventStyles from '../LiveEventList/LiveEventList.module.scss';
-import classNames from 'classnames';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import { Collapse, Button } from '@material-ui/core';
+import {  Button } from '@material-ui/core';
 import { Dispatch } from 'redux';
-import { eventSelector } from '../../../redux/selectors';
 import { connect } from 'react-redux';
-import { SocketSendAction } from '../../../redux/actions';
+import { GetOutcomesAction, SocketSendAction } from '../../../redux/actions';
+import StandardOutcome from '../OutcomeTemplates/StandardOutcome';
+import CorrectScore from '../OutcomeTemplates/CorrectScore';
 
 class EventDetails extends React.PureComponent<any, any> {
   public state = {
-    expandedMarketId: null,
+    areMarketsFetched: false,
+    sortedMarkets: [],
   };
 
   public componentDidMount(): void {
     this.props.getEvent();
+  }
+
+  public componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any): void {
+    if (!this.state.areMarketsFetched && _.size(this.props.event.fetchedMarkets) === this.props.event.markets.length) {
+      const sortedMarkets = _.sortBy(this.props.event.fetchedMarkets, ['displayOrder', 'name']);
+      _(sortedMarkets).slice(0, 10).each((market) => {
+        this.props.getOutcomesForMarket(market);
+      });
+      this.setState({
+        areMarketsFetched: true,
+        sortedMarkets
+      });
+    }
   }
 
   public render() {
@@ -24,12 +37,7 @@ class EventDetails extends React.PureComponent<any, any> {
       event,
       fractionFormat,
       handleClose,
-      completeEvent,
     } = this.props;
-    const {
-      expandedMarketId,
-    } = this.state;
-    // console.log('event', event, completeEvent);
     return (
       <div className={styles.eventDetailsWrapper}>
         <div className={styles.eventInfo}>
@@ -56,38 +64,39 @@ class EventDetails extends React.PureComponent<any, any> {
         </div>
         <div className={styles.markets}>
           <h4>Markets:</h4>
-          { _.map(event.fetchedMarkets, (market, index: number) => (
-            <div className={classNames(styles.eventMarket, eventStyles.eventMarket)} key={`__market-${index}`}>
-              <div className={eventStyles.marketName} onClick={this.toggleMarketDisplay(market)}>
-                {market.name}
-              </div>
-              <Collapse in={expandedMarketId === market.marketId} timeout={0}>
-                {_.map(market.fetchedOutcomes, (outcome, index) => (
-                  <div className={eventStyles.marketOutcome} key={`__outcome-${index}`}>
-                    <div className={eventStyles.outcomeName}>
-                      {outcome.name}
-                    </div>
-                    <div className={eventStyles.outcomePrice}>
-                      { fractionFormat === 'fraction'
-                        ? `${outcome.price.num}/${outcome.price.den}`
-                        : `${outcome.price.decimal}`
-                      }
-                    </div>
-                  </div>
-                ))}
-              </Collapse>
-            </div>
-            ))
+          { _(this.state.sortedMarkets)
+              .filter((market: any) => market.status.displayable)
+              .value()
+              .map((market: any, index: number) => {
+                  if (market.type === 'correct-score') {
+                    return (
+                      <CorrectScore
+                        key={`__market-${index}`}
+                        fractionFormat={fractionFormat}
+                        fetchMarketOutcomes={this.fetchMarketOutcomes}
+                        market={event.fetchedMarkets[market.marketId]}
+                      />
+                    )
+                  } else {
+                    return (
+                      <StandardOutcome
+                        key={`__market-${index}`}
+                        fractionFormat={fractionFormat}
+                        fetchMarketOutcomes={this.fetchMarketOutcomes}
+                        market={event.fetchedMarkets[market.marketId]}
+                      />
+                    )
+                  }
+                }
+              )
           }
         </div>
       </div>
     )
   }
 
-  private toggleMarketDisplay = (market: any) => () => {
-    this.setState({
-      expandedMarketId: this.state.expandedMarketId === market.marketId ? null : market.marketId
-    });
+  private fetchMarketOutcomes = (market: any) => {
+    this.props.getOutcomesForMarket(market);
   };
 }
 
@@ -100,17 +109,13 @@ const mapDispatchToProps = (dispatch: Dispatch, ownProps: any) => {
       }));
     },
     getOutcomesForMarket: (market: any) => {
-      dispatch(new SocketSendAction({
-        type: "getEvent",
-        id: ownProps.event.eventId
-      }));
+      dispatch(new GetOutcomesAction(market));
     }
   };
 };
 
 const mapStateToProps = (state: any, ownProps: any) => {
   return {
-    completeEvent: eventSelector(ownProps.eventId)(state),
   };
 };
 

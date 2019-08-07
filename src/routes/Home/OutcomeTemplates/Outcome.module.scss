@@ -1,0 +1,30 @@
+.correctScoreWrapper {
+  display: flex;
+
+  .correctScoreColumn {
+    flex: 1 0 33.33%;
+
+    .columnHeader {
+      background: #eceff5;
+      color: #737794;
+      font-weight: bold;
+      font-size: 16px;
+      text-align: center;
+      padding: 6px 0;
+    }
+
+    .outcome {
+      border: 1px solid gray;
+      text-align: center;
+      padding: 16px 0;
+      font-weight: bold;
+      font-size: 16px;
+      background: #F3F6F9;
+
+      span {
+        margin-left: 16px;
+        color: #da1c2d;
+      }
+    }
+  }
+}

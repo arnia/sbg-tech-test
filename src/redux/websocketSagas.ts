@@ -1,6 +1,6 @@
 import { put, call, take, race, all, takeEvery, select } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
-import { ActionTypes, GetOutcomesAction, GetMarketsAction, SavePrimaryMarketsAction } from './actions';
+import { ActionTypes, GetMarketsAction, SavePrimaryMarketsAction } from './actions';
 import { displayPrimaryMarketsSelector } from './selectors';
 
 export default function* rootWebsocketSaga() {
@@ -50,7 +50,7 @@ function* internalListener(socket: any) {
 function* externalListener(socketChannel: any) {
   while (true) {
     const action = yield take(socketChannel);
-    console.log('external action', action);
+    // console.log('external action', action);
     switch (action.type) {
       case 'WEBSOCKET_CONNECTED': {
         yield put({type: 'WEBSOCKET_CONNECTED'});
@@ -58,7 +58,10 @@ function* externalListener(socketChannel: any) {
       }
       case 'EVENT_DATA': {
         yield put(action);
-        yield put(new GetMarketsAction([action.data]));
+        yield put(new GetMarketsAction({
+          events: [action.data],
+          withSub: false,
+        }));
         break;
       }
       case 'LIVE_EVENTS_DATA': {
@@ -66,13 +69,15 @@ function* externalListener(socketChannel: any) {
         yield put(action);
         if (displayPrimaryMarkets) {
           yield put(new SavePrimaryMarketsAction(action.data));
-          yield put(new GetMarketsAction(action.data));
+          yield put(new GetMarketsAction({
+            events: action.data,
+            withSub: true
+          }));
         }
         break;
       }
       case 'MARKET_DATA': {
         yield put(action);
-        // yield put(new GetOutcomesAction(action.data));
         break;
       }
       case 'OUTCOME_DATA': {

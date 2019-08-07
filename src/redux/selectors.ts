@@ -14,6 +14,26 @@ export const displayableEventsSelector = () => createSelector(
   }
 );
 
+export const groupedDisplayableEventsSelector = () => createSelector(
+  reducerState(),
+  (state) => {
+    return _(state.events.liveEvents)
+      .filter((event: any) => event.status.displayable)
+      .reduce((groups: any, event: any) => {
+        if (event.linkedEventTypeName) {
+          groups[event.linkedEventTypeName] = groups[event.linkedEventTypeName]
+            ? [...groups[event.linkedEventTypeName], event.eventId]
+            : [event.eventId]
+        } else {
+          groups[event.typeName] = groups[event.typeName]
+            ? [...groups[event.typeName], event.eventId]
+            : [event.eventId]
+        }
+        return groups;
+      }, {});
+  }
+);
+
 export const eventSelector = (eventId: number) => createSelector(
   reducerState(),
   (state) => {

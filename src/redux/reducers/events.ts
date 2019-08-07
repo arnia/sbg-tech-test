@@ -11,6 +11,19 @@ const initialState = {
 
 export default function(state: any = initialState, action: any) {
   switch (action.type) {
+    case 'EVENT_DATA': {
+      const { eventId } = action.data;
+      return Object.assign({}, {
+        ...state,
+        liveEvents: {
+          ...state.liveEvents,
+          [eventId]: {
+            ...state.liveEvents[eventId],
+            ...action.data,
+          }
+        }
+      });
+    }
     case 'LIVE_EVENTS_DATA': {
       return Object.assign({}, {
         ...state,
@@ -90,6 +103,7 @@ export default function(state: any = initialState, action: any) {
     }
     case 'PRICE_CHANGE': {
       const { eventId, marketId, outcomeId } = action.data;
+      console.log('action', action);
       const affectedOutcome: any = _.get(state, ['liveEvents', eventId, 'fetchedMarkets', marketId, 'fetchedOutcomes', outcomeId], null);
       if (affectedOutcome) {
         affectedOutcome.price = action.data.price;

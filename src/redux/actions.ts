@@ -47,7 +47,10 @@ export class GetMarketsAction {
   public readonly type = ActionTypes.GET_MARKETS;
 
   constructor(
-    public payload: any[]
+    public payload: {
+      events: any[],
+      withSub?: boolean,
+    }
   ) {}
 }
 

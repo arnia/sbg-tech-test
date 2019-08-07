@@ -4,12 +4,12 @@ $eventTypeBackground: #0b286c;
   //margin: 0 10px
 }
 
-.eventTypeHeader {
+.sportTypeHeader {
   background: $eventTypeBackground;
   display: flex;
   padding: 20px 24px;
 
-  .eventTypeHeaderTitle {
+  .sportTypeHeaderTitle {
     color: white;
     flex: 0 0 auto;
     font-size: 20px;
@@ -90,6 +90,23 @@ $eventTypeBackground: #0b286c;
       color: #da1c2d;
       flex: 0 0 140px;
       text-align: center;
+    }
+  }
+}
+
+.eventTypeWrapper {
+  margin: 8px;
+
+  .eventTypeHeader {
+    background: $eventTypeBackground;
+    display: flex;
+    padding: 6px 24px;
+
+    .eventTypeHeaderTitle {
+      color: white;
+      flex: 0 0 auto;
+      font-size: 18px;
+      line-height: 37px;
     }
   }
 }

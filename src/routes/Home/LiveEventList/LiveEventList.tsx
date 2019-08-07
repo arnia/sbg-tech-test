@@ -1,13 +1,18 @@
 import styles from './LiveEventList.module.scss';
 import React from 'react';
 import Event from './LiveEvent';
+import EventType from './EventType';
 import _ from 'lodash';
 import {
   FormControlLabel,
   Checkbox
 } from '@material-ui/core';
 import { Dispatch } from 'redux';
-import { boostCounterSelector, displayableEventsSelector } from '../../../redux/selectors';
+import {
+  boostCounterSelector,
+  displayableEventsSelector,
+  groupedDisplayableEventsSelector,
+} from '../../../redux/selectors';
 import { connect } from 'react-redux';
 
 class LiveEventsList extends React.PureComponent<any> {
@@ -19,12 +24,12 @@ class LiveEventsList extends React.PureComponent<any> {
     const {
       eventIds,
       boostCount,
+      groupedEventIds,
     } = this.props;
-
     return (
       <div className={styles.liveEventList}>
-        <div className={styles.eventTypeHeader}>
-          <div className={styles.eventTypeHeaderTitle}>Football</div>
+        <div className={styles.sportTypeHeader}>
+          <div className={styles.sportTypeHeaderTitle}>Football</div>
           <div className={'spacer'} />
           <div className={styles.toggle}>
             <FormControlLabel
@@ -52,9 +57,14 @@ class LiveEventsList extends React.PureComponent<any> {
           </div>
         </div>
         <div>
-          {
-            _.map(eventIds,(event: any, index: number) => (
-              <Event key={`__event-${index}`} eventId={event}/>
+          { _.map(groupedEventIds, (group, key) => (
+              <EventType
+                key={`__eventType-${key}`}
+                type={{
+                  eventIds: group,
+                  typeName: key,
+                }}
+              />
             ))
           }
         </div>
@@ -78,6 +88,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
 const mapStateToProps = (state: any, ownProps: any) => {
   return {
     eventIds: displayableEventsSelector()(state),
+    groupedEventIds: groupedDisplayableEventsSelector()(state),
     boostCount: boostCounterSelector()(state)
   };
 };

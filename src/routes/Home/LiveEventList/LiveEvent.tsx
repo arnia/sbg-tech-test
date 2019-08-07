@@ -15,13 +15,25 @@ import {
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import EventDetails from '../EventDetails';
-import { ClearNonPrimarySubscriptionsAction } from '../../../redux/actions';
+import { ClearNonPrimarySubscriptionsAction, GetOutcomesAction } from '../../../redux/actions';
 
 class Event extends React.PureComponent<any, any> {
   public state = {
     expandedMarket: false,
     showEventDetails: false,
+    areMarketsFetched: false,
   };
+
+  public componentDidUpdate() {
+    if (!this.state.areMarketsFetched && _.size(this.props.event.fetchedMarkets) === this.props.event.markets.length) {
+      const { event, getOutcomesForMarket } = this.props;
+      const firstMarket =  event.fetchedMarkets[Object.keys(event.fetchedMarkets)[0]];
+      getOutcomesForMarket(firstMarket);
+      this.setState({
+        areMarketsFetched: true,
+      });
+    }
+  }
 
   public render() {
     const {
@@ -71,9 +83,9 @@ class Event extends React.PureComponent<any, any> {
         }
         <Dialog open={showEventDetails}
                 onClose={this.hideEventDetails}
-                // fullWidth={true}
-                // maxWidth={'md'}
-                fullScreen={true}
+                fullWidth={true}
+                maxWidth={'lg'}
+                // fullScreen={true}
         >
           <EventDetails
             event={event}
@@ -107,6 +119,9 @@ class Event extends React.PureComponent<any, any> {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
+    getOutcomesForMarket: (market: any) => {
+      dispatch(new GetOutcomesAction(market));
+    },
     // test: () => {
     //   dispatch({
     //     type: 'PRICE_CHANGE',
