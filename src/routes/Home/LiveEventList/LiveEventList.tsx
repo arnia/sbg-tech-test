@@ -7,12 +7,12 @@ import {
   Checkbox
 } from '@material-ui/core';
 import { Dispatch } from 'redux';
-import { boostCounterSelector, eventsSelector } from '../../../redux/selectors';
+import { boostCounterSelector, displayableEventsSelector } from '../../../redux/selectors';
 import { connect } from 'react-redux';
 
 class LiveEventsList extends React.PureComponent<any> {
   public state = {
-    showPrimaryMarkets: false
+    showPrimaryMarkets: true
   };
 
   public render() {
@@ -77,7 +77,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
 
 const mapStateToProps = (state: any, ownProps: any) => {
   return {
-    eventIds: eventsSelector()(state),
+    eventIds: displayableEventsSelector()(state),
     boostCount: boostCounterSelector()(state)
   };
 };

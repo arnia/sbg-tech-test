@@ -1,6 +1,6 @@
 import { put, call, take, race, all, takeEvery, select } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
-import { ActionTypes, GetOutcomesAction, GetPrimaryMarketsAction } from './actions';
+import { ActionTypes, GetOutcomesAction, GetMarketsAction, SavePrimaryMarketsAction } from './actions';
 import { displayPrimaryMarketsSelector } from './selectors';
 
 export default function* rootWebsocketSaga() {
@@ -42,7 +42,7 @@ function handleUpdates(socket: any) {
 function* internalListener(socket: any) {
   while (true) {
     const data = yield take(ActionTypes.SOCKET_SEND);
-    console.log('internal socket send', data.payload);
+    // console.log('internal socket send', data.payload);
     socket.send(JSON.stringify(data.payload));
   }
 }
@@ -50,30 +50,40 @@ function* internalListener(socket: any) {
 function* externalListener(socketChannel: any) {
   while (true) {
     const action = yield take(socketChannel);
+    console.log('external action', action);
     switch (action.type) {
       case 'WEBSOCKET_CONNECTED': {
         yield put({type: 'WEBSOCKET_CONNECTED'});
+        break;
+      }
+      case 'EVENT_DATA': {
+        yield put(action);
+        yield put(new GetMarketsAction([action.data]));
         break;
       }
       case 'LIVE_EVENTS_DATA': {
         const displayPrimaryMarkets = yield select(displayPrimaryMarketsSelector());
         yield put(action);
         if (displayPrimaryMarkets) {
-          yield put(new GetPrimaryMarketsAction(action.data))
+          yield put(new SavePrimaryMarketsAction(action.data));
+          yield put(new GetMarketsAction(action.data));
         }
         break;
       }
       case 'MARKET_DATA': {
         yield put(action);
-        yield put(new GetOutcomesAction(action.data));
+        // yield put(new GetOutcomesAction(action.data));
         break;
       }
       case 'OUTCOME_DATA': {
         yield put(action);
         break;
       }
+      case 'CURRENT_SUBSCRIPTIONS': {
+        yield put(action);
+        break;
+      }
       default: {
-        console.log('external action', action);
         yield put(action);
       }
     }

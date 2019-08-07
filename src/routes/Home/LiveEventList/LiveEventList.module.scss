@@ -48,8 +48,9 @@ $eventTypeBackground: #0b286c;
 .eventInfo {
   height: 60px;
   display: flex;
-  background: #ffffff;
+  background: #d6d6d6;
   align-items: center;
+  cursor: pointer;
 
   .eventName {
     font-weight: bold;
@@ -69,7 +70,7 @@ $eventTypeBackground: #0b286c;
     background: #cfdaea;
     color: #323565;
     font-weight: bold;
-    padding: 10px;
+    padding: 16px 10px;
     cursor: pointer;
   }
 
@@ -87,7 +88,7 @@ $eventTypeBackground: #0b286c;
       padding: 10px;
       background: #f3f6f9;
       color: #da1c2d;
-      flex: 0 0 60px;
+      flex: 0 0 140px;
       text-align: center;
     }
   }

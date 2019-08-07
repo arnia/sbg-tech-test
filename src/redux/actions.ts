@@ -1,11 +1,14 @@
 export const ActionTypes = {
   'TOGGLE_PRIMARY_MARKET_DISPLAY': 'TOGGLE_PRIMARY_MARKET_DISPLAY',
-  'GET_PRIMARY_MARKETS': 'GET_PRIMARY_MARKETS',
+  'GET_MARKETS': 'GET_MARKETS',
   'GET_PRIMARY_MARKETS_SUCCESS': 'GET_PRIMARY_MARKETS_SUCCESS',
   'GET_OUTCOMES': 'GET_OUTCOMES',
   'SOCKET_SEND': 'SOCKET_SEND',
   'START_WEBSOCKET': 'START_WEBSOCKET',
   'CLOSE_WEBSOCKET': 'CLOSE_WEBSOCKET',
+  'TOGGLE_PRICE_FORMAT': 'TOGGLE_PRICE_FORMAT',
+  'SAVE_PRIMARY_MARKETS': 'SAVE_PRIMARY_MARKETS',
+  'CLEAR_NON_PRIMARY_SUBSCRIPTIONS': 'CLEAR_NON_PRIMARY_SUBSCRIPTIONS',
 };
 
 export class TogglePrimaryMarketDisplayAction {
@@ -40,8 +43,8 @@ export class SocketCloseAction {
   ) {}
 }
 
-export class GetPrimaryMarketsAction {
-  public readonly type = ActionTypes.GET_PRIMARY_MARKETS;
+export class GetMarketsAction {
+  public readonly type = ActionTypes.GET_MARKETS;
 
   constructor(
     public payload: any[]
@@ -54,4 +57,28 @@ export class GetOutcomesAction {
   constructor(
     public payload: any
   ) {}
+}
+
+export class TogglePriceFormatAction {
+  public readonly type = ActionTypes.TOGGLE_PRICE_FORMAT;
+
+  constructor(
+    public payload: any
+  ) {}
+}
+
+export class SavePrimaryMarketsAction {
+  public readonly type = ActionTypes.SAVE_PRIMARY_MARKETS;
+
+  constructor(
+    public payload: any[]
+  ) {}
+}
+
+export class ClearNonPrimarySubscriptionsAction {
+  public readonly type = ActionTypes.CLEAR_NON_PRIMARY_SUBSCRIPTIONS;
+
+  // constructor(
+  //   public payload: any[]
+  // ) {}
 }

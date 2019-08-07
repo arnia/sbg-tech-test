@@ -1,33 +1,42 @@
 import React from 'react';
 import styles from './LiveEventList.module.scss';
 import {
-  Collapse
+  Collapse,
+  Dialog,
 } from '@material-ui/core';
 import classNames from 'classnames';
 import dayjs from 'dayjs';
 import { Dispatch } from 'redux';
-import { displayPrimaryMarketsSelector, eventSelector } from '../../../redux/selectors';
+import {
+  displayPrimaryMarketsSelector,
+  eventSelector,
+  priceFormatSelector,
+} from '../../../redux/selectors';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import EventDetails from '../EventDetails';
+import { ClearNonPrimarySubscriptionsAction } from '../../../redux/actions';
 
 class Event extends React.PureComponent<any, any> {
   public state = {
-    expandedMarket: false
+    expandedMarket: false,
+    showEventDetails: false,
   };
 
   public render() {
     const {
       event,
       displayMarket,
+      fractionFormat,
     } = this.props;
     const {
-      expandedMarket
+      expandedMarket,
+      showEventDetails,
     } = this.state;
-    // console.log('event', event);
     const firstMarket = event.fetchedMarkets && Object.keys(event.fetchedMarkets)[0] && event.fetchedMarkets[Object.keys(event.fetchedMarkets)[0]];
     return (
       <div className={styles.eventWrapper}>
-        <div className={styles.eventInfo}>
+        <div className={styles.eventInfo} onClick={this.openEventDetails}>
           <div className={classNames({
             [styles.eventStartTime]: true,
             'styles.started': event.status.started
@@ -50,22 +59,50 @@ class Event extends React.PureComponent<any, any> {
                     {outcome.name}
                   </div>
                   <div className={styles.outcomePrice}>
-                    {`${outcome.price.num}/${outcome.price.den}`}
+                    { fractionFormat === 'fraction'
+                      ? `${outcome.price.num}/${outcome.price.den}`
+                      : `${outcome.price.decimal}`
+                    }
                   </div>
                 </div>
               ))}
             </Collapse>
           </div>
         }
+        <Dialog open={showEventDetails}
+                onClose={this.hideEventDetails}
+                // fullWidth={true}
+                // maxWidth={'md'}
+                fullScreen={true}
+        >
+          <EventDetails
+            event={event}
+            handleClose={this.hideEventDetails}
+            fractionFormat={fractionFormat}
+          />
+        </Dialog>
       </div>
     );
   }
+
+  private openEventDetails = () => {
+    this.setState({
+      showEventDetails: true
+    });
+  };
+
+  private hideEventDetails = () => {
+    this.setState({
+      showEventDetails: false
+    });
+    this.props.clearSubscriptions();
+  };
 
   private toggleMarketDisplay = () => {
     this.setState({
       expandedMarket: !this.state.expandedMarket
     });
-  }
+  };
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
@@ -85,6 +122,9 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     //     }
     //   })
     // }
+    clearSubscriptions: () => {
+      dispatch(new ClearNonPrimarySubscriptionsAction());
+    }
   };
 };
 
@@ -92,6 +132,7 @@ const mapStateToProps = (state: any, ownProps: any) => {
   return {
     event: eventSelector(ownProps.eventId)(state),
     displayMarket: displayPrimaryMarketsSelector()(state),
+    fractionFormat: priceFormatSelector()(state),
   };
 };
 

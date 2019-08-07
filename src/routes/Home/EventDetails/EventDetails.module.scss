@@ -1,0 +1,42 @@
+.eventDetailsWrapper {
+
+  .eventInfo {
+    padding: 20px 24px;
+    background: #0d2051;
+    color: white;
+    display: flex;
+
+    .eventName {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 16px;
+
+
+    }
+
+    .close {
+      button {
+        font-size: 30px;
+        color: white;
+      }
+    }
+
+    .scores {
+      span {
+        font-size: 24px;
+        font-weight: bold;
+        float: right;
+        padding: 8px;
+        border: 1px solid;
+      }
+    }
+  }
+
+  .markets {
+    padding: 10px;
+  }
+
+  .eventMarket {
+    border: 1px solid #0d2051;
+  }
+}

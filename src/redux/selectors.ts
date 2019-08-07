@@ -5,10 +5,12 @@ const reducerState = () => (state: any) => {
   return state;
 };
 
-export const eventsSelector = () => createSelector(
+export const displayableEventsSelector = () => createSelector(
   reducerState(),
   (state) => {
-    return Object.keys(state.events.liveEvents);
+    return Object.keys(state.events.liveEvents).filter((key: any) => {
+      return state.events.liveEvents[key].status.displayable;
+    });
   }
 );
 
@@ -27,6 +29,14 @@ export const boostCounterSelector = () => createSelector(
   }
 );
 
+export const nonPrimaryMarketsSelector = () => createSelector(
+  reducerState(),
+  (state) => {
+    const primaryMarkets = state.events.primaryMarkets;
+    const currentSubscriptions = state.events.currentSubscriptions;
+    return _.difference(currentSubscriptions, primaryMarkets);
+  }
+);
 
 export const websocketConnectedSelector = () => createSelector(
   reducerState(),
@@ -39,5 +49,12 @@ export const displayPrimaryMarketsSelector = () => createSelector(
   reducerState(),
   (state) => {
     return state.events.displayPrimaryMarkets;
+  }
+);
+
+export const priceFormatSelector = () => createSelector(
+  reducerState(),
+  (state) => {
+    return state.events.priceFormat;
   }
 );

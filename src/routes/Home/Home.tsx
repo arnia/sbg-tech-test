@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import { SocketSendAction, SocketStartAction } from '../../redux/actions';
-import { websocketConnectedSelector } from '../../redux/selectors';
+import { SocketSendAction, SocketStartAction, TogglePriceFormatAction } from '../../redux/actions';
+import { priceFormatSelector, websocketConnectedSelector } from '../../redux/selectors';
 import skybetLogo from '../../assets/skybet.png'
 
 import LiveEventsList from './LiveEventList';
@@ -11,7 +11,9 @@ import homeStyles from './Home.module.scss';
 interface IHomeProps {
   liveEvents?: any[];
   websocketConnected?: boolean;
-  subscribeToLiveEvents: (primaryMarkets?: boolean) => void;
+  priceFormat: string;
+  getLiveEvents: (primaryMarkets?: boolean) => void;
+  togglePriceFormat: (useFractionFormat?: string) => void;
   startWebsocketConnection: () => void;
 }
 
@@ -36,21 +38,21 @@ class Home extends React.Component<IHomeProps, IHomeState> {
 
   public componentDidUpdate(prevProps: Readonly<IHomeProps>, prevState: Readonly<{}>, snapshot?: any): void {
     const {
-      subscribeToLiveEvents,
+      getLiveEvents,
       websocketConnected,
     } = this.props;
     if (websocketConnected && !this.state.subscribedToLiveEvents) {
       this.setState({
         subscribedToLiveEvents: true
       });
-      subscribeToLiveEvents();
+      getLiveEvents();
     }
   }
 
   public render() {
     return (
       <div className={homeStyles.homeContainer}>
-        <div className={homeStyles.header}>
+        <div className={homeStyles.header} onClick={this.togglePriceFormat}>
           <img src={skybetLogo} alt="skybet-logo"/>
         </div>
         <LiveEventsList
@@ -61,13 +63,23 @@ class Home extends React.Component<IHomeProps, IHomeState> {
   }
 
   private togglePrimaryMarketDisplay = (displayPrimaryMarkets: boolean) => {
-    this.props.subscribeToLiveEvents(displayPrimaryMarkets);
+    this.props.getLiveEvents(displayPrimaryMarkets);
+  };
+
+  private togglePriceFormat = () => {
+    const {
+      priceFormat,
+      togglePriceFormat
+    } = this.props;
+    const newPriceFormat = priceFormat === 'fraction' ? 'decimal' : 'fraction';
+    localStorage.setItem('priceFormat', newPriceFormat);
+    togglePriceFormat(newPriceFormat);
   }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    subscribeToLiveEvents: (primaryMarkets: boolean = false) => {
+    getLiveEvents: (primaryMarkets: boolean = true) => {
       dispatch(new SocketSendAction({
         type: "getLiveEvents",
         primaryMarkets
@@ -75,14 +87,17 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     },
     startWebsocketConnection: () => {
       dispatch(new SocketStartAction({}))
+    },
+    togglePriceFormat: (fractionFormat: string) => {
+      dispatch(new TogglePriceFormatAction(fractionFormat))
     }
   };
-
 };
 
 const mapStateToProps = (state: any, ownProps: any) => {
   return {
-    websocketConnected: websocketConnectedSelector()(state)
+    websocketConnected: websocketConnectedSelector()(state),
+    priceFormat: priceFormatSelector()(state),
   };
 };
 
