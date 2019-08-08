@@ -27,8 +27,8 @@ class Event extends React.PureComponent<any, any> {
   public componentDidUpdate() {
     if (!this.state.areMarketsFetched && _.size(this.props.event.fetchedMarkets) === this.props.event.markets.length) {
       const { event, getOutcomesForMarket } = this.props;
-      const firstMarket =  event.fetchedMarkets[Object.keys(event.fetchedMarkets)[0]];
-      getOutcomesForMarket(firstMarket);
+      const primaryMarket =  event.fetchedMarkets[event.primaryMarket];
+      getOutcomesForMarket(primaryMarket);
       this.setState({
         areMarketsFetched: true,
       });
@@ -45,7 +45,8 @@ class Event extends React.PureComponent<any, any> {
       expandedMarket,
       showEventDetails,
     } = this.state;
-    const firstMarket = event.fetchedMarkets && Object.keys(event.fetchedMarkets)[0] && event.fetchedMarkets[Object.keys(event.fetchedMarkets)[0]];
+    const primaryMarket = event.fetchedMarkets && event.fetchedMarkets[event.primaryMarket];
+    // const firstMarket = event.fetchedMarkets && Object.keys(event.fetchedMarkets)[0] && event.fetchedMarkets[Object.keys(event.fetchedMarkets)[0]];
     return (
       <div className={styles.eventWrapper}>
         <div className={styles.eventInfo} onClick={this.openEventDetails}>
@@ -59,13 +60,13 @@ class Event extends React.PureComponent<any, any> {
             {event.name}
           </div>
         </div>
-        { displayMarket && firstMarket &&
+        { displayMarket && primaryMarket &&
           <div className={styles.eventMarket}>
             <div className={styles.marketName} onClick={this.toggleMarketDisplay}>
-              {firstMarket.name}
+              {primaryMarket.name}
             </div>
             <Collapse in={!expandedMarket} timeout={0}>
-              {_.map(firstMarket.fetchedOutcomes, (outcome, index) => (
+              {_.map(primaryMarket.fetchedOutcomes, (outcome, index) => (
                 <div className={styles.marketOutcome} key={`__outcome-${index}`}>
                   <div className={styles.outcomeName}>
                     {outcome.name}
@@ -83,9 +84,9 @@ class Event extends React.PureComponent<any, any> {
         }
         <Dialog open={showEventDetails}
                 onClose={this.hideEventDetails}
-                fullWidth={true}
-                maxWidth={'lg'}
-                // fullScreen={true}
+                // fullWidth={true}
+                // maxWidth={'lg'}
+                fullScreen={true}
         >
           <EventDetails
             event={event}

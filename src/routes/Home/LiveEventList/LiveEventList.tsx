@@ -1,6 +1,5 @@
 import styles from './LiveEventList.module.scss';
 import React from 'react';
-import Event from './LiveEvent';
 import EventType from './EventType';
 import _ from 'lodash';
 import {
@@ -22,7 +21,6 @@ class LiveEventsList extends React.PureComponent<any> {
 
   public render() {
     const {
-      eventIds,
       boostCount,
       groupedEventIds,
     } = this.props;

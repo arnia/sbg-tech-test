@@ -28,7 +28,10 @@ export default function(state: any = initialState, action: any) {
       return Object.assign({}, {
         ...state,
         liveEvents: action.data.reduce((events: any, event: any) => {
-          events[event.eventId] = event;
+          events[event.eventId] = {
+            ...event,
+            primaryMarket: event.markets[0]
+          };
           return events;
         }, {})
       });
