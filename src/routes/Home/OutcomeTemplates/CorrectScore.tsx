@@ -86,24 +86,6 @@ function CorrectScore({
                 }
               </div>
           </div>
-
-        {/*{ _(market.fetchedOutcomes)*/}
-        {/*.values()*/}
-        {/*.filter((outcome: any) => outcome.status.displayable)*/}
-        {/*.value()*/}
-        {/*.map((outcome, index) => (*/}
-        {/*<div className={eventStyles.marketOutcome} key={`__outcome-${index}`}>*/}
-        {/*<div className={eventStyles.outcomeName}>*/}
-        {/*{outcome.name}*/}
-        {/*</div>*/}
-        {/*<div className={eventStyles.outcomePrice}>*/}
-        {/*{ !outcome.status.suspended*/}
-        {/*? formatPrice(outcome.price, fractionFormat)*/}
-        {/*: '-'*/}
-        {/*}*/}
-        {/*</div>*/}
-        {/*</div>*/}
-        {/*))}*/}
       </Collapse>
       }
     </div>
