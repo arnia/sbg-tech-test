@@ -30,7 +30,8 @@ export default function(state: any = initialState, action: any) {
         liveEvents: action.data.reduce((events: any, event: any) => {
           events[event.eventId] = {
             ...event,
-            primaryMarket: event.markets[0]
+            markets: event.markets || [],
+            primaryMarket: event.markets ? event.markets[0] : null
           };
           return events;
         }, {})
@@ -40,7 +41,10 @@ export default function(state: any = initialState, action: any) {
       const { eventId, marketId } = action.data;
       let affectedEvent = state.liveEvents[eventId];
       const updatedMarkets = affectedEvent.fetchedMarkets || {};
-      updatedMarkets[marketId] = action.data;
+      updatedMarkets[marketId] = {
+        ...updatedMarkets[marketId],
+        ...action.data
+      };
       affectedEvent = {
         ...affectedEvent,
         fetchedMarkets: updatedMarkets,
@@ -106,7 +110,7 @@ export default function(state: any = initialState, action: any) {
     }
     case 'PRICE_CHANGE': {
       const { eventId, marketId, outcomeId } = action.data;
-      console.log('action', action);
+      // console.log('price change', action.data);
       const affectedOutcome: any = _.get(state, ['liveEvents', eventId, 'fetchedMarkets', marketId, 'fetchedOutcomes', outcomeId], null);
       if (affectedOutcome) {
         affectedOutcome.price = action.data.price;

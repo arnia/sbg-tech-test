@@ -4,7 +4,8 @@ import _ from 'lodash';
 import Event from './LiveEvent';
 
 function EventType({
-                     type
+                     type,
+                     showPrimaryMarkets,
                    }: any) {
   return (
     <div className={styles.eventTypeWrapper}>
@@ -16,7 +17,11 @@ function EventType({
       <div>
         {
           _.map(type.eventIds, (event: any, index: number) => (
-            <Event key={`__event-${index}`} eventId={event}/>
+            <Event
+              key={`__event-${index}`}
+              eventId={event}
+              showPrimaryMarkets={showPrimaryMarkets}
+            />
           ))
         }
       </div>

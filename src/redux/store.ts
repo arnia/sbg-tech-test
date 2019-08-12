@@ -12,7 +12,9 @@ const websocketSagaMiddleware = createSagaMiddleware();
 
 export default createStore(
   rootReducer,
-  composeWithDevTools(
+  composeWithDevTools({
+    maxAge: 1000,
+  })(
     applyMiddleware(
       reduxClassActionMiddleware,
       sagaMiddleware,

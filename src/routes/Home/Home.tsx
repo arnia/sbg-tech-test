@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { SocketSendAction, SocketStartAction, TogglePriceFormatAction } from '../../redux/actions';
 import { priceFormatSelector, websocketConnectedSelector } from '../../redux/selectors';
-import skybetLogo from '../../assets/skybet.png'
+import skybetLogo from '../../assets/skybet.png';
 
 import LiveEventsList from './LiveEventList';
 import homeStyles from './Home.module.scss';
@@ -19,13 +19,15 @@ interface IHomeProps {
 
 interface IHomeState {
   subscribedToLiveEvents: boolean;
+  arePrimaryMarketsFetched: boolean;
 }
 
 class Home extends React.Component<IHomeProps, IHomeState> {
   constructor(props: any) {
     super(props);
     this.state = {
-      subscribedToLiveEvents: false
+      subscribedToLiveEvents: false,
+      arePrimaryMarketsFetched: false,
     };
   }
 
@@ -38,14 +40,13 @@ class Home extends React.Component<IHomeProps, IHomeState> {
 
   public componentDidUpdate(prevProps: Readonly<IHomeProps>, prevState: Readonly<{}>, snapshot?: any): void {
     const {
-      getLiveEvents,
       websocketConnected,
     } = this.props;
     if (websocketConnected && !this.state.subscribedToLiveEvents) {
       this.setState({
         subscribedToLiveEvents: true
       });
-      getLiveEvents();
+      this.togglePrimaryMarketDisplay(false);
     }
   }
 
@@ -63,7 +64,14 @@ class Home extends React.Component<IHomeProps, IHomeState> {
   }
 
   private togglePrimaryMarketDisplay = (displayPrimaryMarkets: boolean) => {
-    this.props.getLiveEvents(displayPrimaryMarkets);
+    if (!this.state.arePrimaryMarketsFetched) {
+      this.props.getLiveEvents(displayPrimaryMarkets);
+      if (displayPrimaryMarkets) {
+        this.setState({
+          arePrimaryMarketsFetched: true,
+        });
+      }
+    }
   };
 
   private togglePriceFormat = () => {
@@ -79,7 +87,7 @@ class Home extends React.Component<IHomeProps, IHomeState> {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    getLiveEvents: (primaryMarkets: boolean = true) => {
+    getLiveEvents: (primaryMarkets: boolean = false) => {
       dispatch(new SocketSendAction({
         type: "getLiveEvents",
         primaryMarkets

@@ -60,7 +60,7 @@ function* externalListener(socketChannel: any) {
         yield put(action);
         yield put(new GetMarketsAction({
           events: [action.data],
-          withSub: false,
+          withSub: true,
         }));
         break;
       }

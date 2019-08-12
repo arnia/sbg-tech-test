@@ -8,7 +8,6 @@ import classNames from 'classnames';
 import dayjs from 'dayjs';
 import { Dispatch } from 'redux';
 import {
-  displayPrimaryMarketsSelector,
   eventSelector,
   priceFormatSelector,
 } from '../../../redux/selectors';
@@ -21,16 +20,18 @@ class Event extends React.PureComponent<any, any> {
   public state = {
     expandedMarket: false,
     showEventDetails: false,
-    areMarketsFetched: false,
+    areOutcomesFetched: false,
   };
 
   public componentDidUpdate() {
-    if (!this.state.areMarketsFetched && _.size(this.props.event.fetchedMarkets) === this.props.event.markets.length) {
+    if (!this.state.areOutcomesFetched && this.props.event.fetchedMarkets && _.size(this.props.event.fetchedMarkets) === this.props.event.markets.length) {
       const { event, getOutcomesForMarket } = this.props;
       const primaryMarket =  event.fetchedMarkets[event.primaryMarket];
-      getOutcomesForMarket(primaryMarket);
+      if (primaryMarket) {
+        getOutcomesForMarket(primaryMarket);
+      }
       this.setState({
-        areMarketsFetched: true,
+        areOutcomesFetched: true,
       });
     }
   }
@@ -38,15 +39,14 @@ class Event extends React.PureComponent<any, any> {
   public render() {
     const {
       event,
-      displayMarket,
       fractionFormat,
+      showPrimaryMarkets,
     } = this.props;
     const {
       expandedMarket,
       showEventDetails,
     } = this.state;
     const primaryMarket = event.fetchedMarkets && event.fetchedMarkets[event.primaryMarket];
-    // const firstMarket = event.fetchedMarkets && Object.keys(event.fetchedMarkets)[0] && event.fetchedMarkets[Object.keys(event.fetchedMarkets)[0]];
     return (
       <div className={styles.eventWrapper}>
         <div className={styles.eventInfo} onClick={this.openEventDetails}>
@@ -60,7 +60,7 @@ class Event extends React.PureComponent<any, any> {
             {event.name}
           </div>
         </div>
-        { displayMarket && primaryMarket &&
+        { showPrimaryMarkets && primaryMarket &&
           <div className={styles.eventMarket}>
             <div className={styles.marketName} onClick={this.toggleMarketDisplay}>
               {primaryMarket.name}
@@ -123,21 +123,6 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     getOutcomesForMarket: (market: any) => {
       dispatch(new GetOutcomesAction(market));
     },
-    // test: () => {
-    //   dispatch({
-    //     type: 'PRICE_CHANGE',
-    //     data: {
-    //       eventId: 21249937,
-    //       marketId: 93649011,
-    //       outcomeId: 367527714,
-    //       price: {
-    //         num: 999,
-    //         den: 888,
-    //         decimal: 5
-    //       }
-    //     }
-    //   })
-    // }
     clearSubscriptions: () => {
       dispatch(new ClearNonPrimarySubscriptionsAction());
     }
@@ -147,7 +132,6 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
 const mapStateToProps = (state: any, ownProps: any) => {
   return {
     event: eventSelector(ownProps.eventId)(state),
-    displayMarket: displayPrimaryMarketsSelector()(state),
     fractionFormat: priceFormatSelector()(state),
   };
 };

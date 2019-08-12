@@ -22,7 +22,7 @@ class EventDetails extends React.PureComponent<any, any> {
   public componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any): void {
     if (!this.state.areMarketsFetched && _.size(this.props.event.fetchedMarkets) === this.props.event.markets.length) {
       const sortedMarkets = _.sortBy(this.props.event.fetchedMarkets, ['displayOrder', 'name']);
-      _(sortedMarkets).slice(0, 10).each((market) => {
+      _(sortedMarkets).slice(0, 10).each((market: any) => {
         this.props.getOutcomesForMarket(market);
       });
       this.setState({
@@ -108,6 +108,25 @@ const mapDispatchToProps = (dispatch: Dispatch, ownProps: any) => {
         id: ownProps.event.eventId
       }));
     },
+    // test: () => {
+    //   dispatch({
+    //     type: 'OUTCOME_STATUS',
+    //     data: {
+    //       eventId: 21249937,
+    //       marketId: 93648928,
+    //       outcomeId: 367527446,
+    //       // price: {
+    //       //   num: 999,
+    //       //   den: 888,
+    //       //   decimal: 5
+    //       // },
+    //       status: {
+    //         suspended: false,
+    //         displayable: true,
+    //       }
+    //     }
+    //   })
+    // },
     getOutcomesForMarket: (market: any) => {
       dispatch(new GetOutcomesAction(market));
     }

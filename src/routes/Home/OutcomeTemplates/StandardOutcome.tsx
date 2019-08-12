@@ -3,7 +3,7 @@ import styles from '../EventDetails/EventDetails.module.scss';
 import eventStyles from '../LiveEventList/LiveEventList.module.scss';
 import { Collapse } from '@material-ui/core';
 import _ from 'lodash';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { formatPrice } from '../../../utils/formatPrice';
 
 
@@ -14,6 +14,11 @@ function StandardOutcome({
   }: any) {
   const [hasOutcomes, setHasOutcomes] = useState(!!_.size(market.fetchedOutcomes));
   const [expanded, setExpanded] = useState(true);
+  useEffect(() => {
+    if (!hasOutcomes && !!_.size(market.fetchedOutcomes)) {
+      setHasOutcomes(true);
+    }
+  }, [hasOutcomes, market.fetchedOutcomes]);
   return (
     <div className={classNames(styles.eventMarket, eventStyles.eventMarket)}>
       <div className={eventStyles.marketName} onClick={() => {
@@ -39,7 +44,7 @@ function StandardOutcome({
               <div className={eventStyles.outcomePrice}>
                 { !outcome.status.suspended
                    ? formatPrice(outcome.price, fractionFormat)
-                   : '-'
+                   : 'Suspended'
                 }
               </div>
             </div>

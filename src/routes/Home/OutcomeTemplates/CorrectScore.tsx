@@ -48,7 +48,7 @@ function CorrectScore({
                     <span>
                       {!outcome.status.suspended
                         ? formatPrice(outcome.price, fractionFormat)
-                        : '-'
+                        : 'Suspended'
                       }
                     </span>
                   </div>
@@ -63,7 +63,7 @@ function CorrectScore({
                     <span>
                       {!outcome.status.suspended
                         ? formatPrice(outcome.price, fractionFormat)
-                        : '-'
+                        : 'Suspended'
                       }
                     </span>
                   </div>
@@ -78,7 +78,7 @@ function CorrectScore({
                     <span>
                     {!outcome.status.suspended
                       ? formatPrice(outcome.price, fractionFormat)
-                      : '-'
+                      : 'Suspended'
                     }
                   </span>
                   </div>

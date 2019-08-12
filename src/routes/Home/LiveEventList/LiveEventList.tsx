@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
 
 class LiveEventsList extends React.PureComponent<any> {
   public state = {
-    showPrimaryMarkets: true
+    showPrimaryMarkets: false
   };
 
   public render() {
@@ -62,6 +62,7 @@ class LiveEventsList extends React.PureComponent<any> {
                   eventIds: group,
                   typeName: key,
                 }}
+                showPrimaryMarkets={this.state.showPrimaryMarkets}
               />
             ))
           }
