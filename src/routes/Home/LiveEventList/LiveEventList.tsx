@@ -4,15 +4,17 @@ import EventType from './EventType';
 import _ from 'lodash';
 import {
   FormControlLabel,
-  Checkbox
+  Checkbox,
+  Button,
 } from '@material-ui/core';
 import { Dispatch } from 'redux';
 import {
   boostCounterSelector,
   displayableEventsSelector,
-  groupedDisplayableEventsSelector,
+  groupedDisplayableEventsSelector, priceFormatSelector,
 } from '../../../redux/selectors';
 import { connect } from 'react-redux';
+import { TogglePriceFormatAction } from '../../../redux/actions';
 
 class LiveEventsList extends React.PureComponent<any> {
   public state = {
@@ -48,6 +50,12 @@ class LiveEventsList extends React.PureComponent<any> {
 
           </div>
           <div className={'spacer'} />
+          <div>
+            <Button onClick={this.togglePriceFormat} color={'primary'} variant={'contained'}>
+              Toggle Price Format
+            </Button>
+          </div>
+          <div className={'spacer'} />
           <div className={styles.boostCounterWrapper}>
             <div className={styles.boostCounter}>
               {boostCount} Boosts
@@ -78,17 +86,32 @@ class LiveEventsList extends React.PureComponent<any> {
 
     this.props.togglePrimaryMarketDisplay(!this.state.showPrimaryMarkets);
   }
+
+  private togglePriceFormat = () => {
+    const {
+      priceFormat,
+      togglePriceFormat
+    } = this.props;
+    const newPriceFormat = priceFormat === 'fraction' ? 'decimal' : 'fraction';
+    localStorage.setItem('priceFormat', newPriceFormat);
+    togglePriceFormat(newPriceFormat);
+  }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
-  return {};
+  return {
+    togglePriceFormat: (fractionFormat: string) => {
+      dispatch(new TogglePriceFormatAction(fractionFormat))
+    }
+  };
 };
 
 const mapStateToProps = (state: any, ownProps: any) => {
   return {
     eventIds: displayableEventsSelector()(state),
     groupedEventIds: groupedDisplayableEventsSelector()(state),
-    boostCount: boostCounterSelector()(state)
+    boostCount: boostCounterSelector()(state),
+    priceFormat: priceFormatSelector()(state),
   };
 };
 

@@ -73,16 +73,6 @@ class Home extends React.Component<IHomeProps, IHomeState> {
       }
     }
   };
-
-  private togglePriceFormat = () => {
-    const {
-      priceFormat,
-      togglePriceFormat
-    } = this.props;
-    const newPriceFormat = priceFormat === 'fraction' ? 'decimal' : 'fraction';
-    localStorage.setItem('priceFormat', newPriceFormat);
-    togglePriceFormat(newPriceFormat);
-  }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
@@ -96,16 +86,12 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     startWebsocketConnection: () => {
       dispatch(new SocketStartAction({}))
     },
-    togglePriceFormat: (fractionFormat: string) => {
-      dispatch(new TogglePriceFormatAction(fractionFormat))
-    }
   };
 };
 
 const mapStateToProps = (state: any, ownProps: any) => {
   return {
     websocketConnected: websocketConnectedSelector()(state),
-    priceFormat: priceFormatSelector()(state),
   };
 };
 

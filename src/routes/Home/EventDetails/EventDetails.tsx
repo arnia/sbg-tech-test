@@ -5,9 +5,10 @@ import _ from 'lodash';
 import {  Button } from '@material-ui/core';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import { GetOutcomesAction, SocketSendAction } from '../../../redux/actions';
+import { GetOutcomesAction, SocketSendAction, TogglePriceFormatAction } from '../../../redux/actions';
 import StandardOutcome from '../OutcomeTemplates/StandardOutcome';
 import CorrectScore from '../OutcomeTemplates/CorrectScore';
+import { priceFormatSelector } from '../../../redux/selectors';
 
 class EventDetails extends React.PureComponent<any, any> {
   public state = {
@@ -51,8 +52,14 @@ class EventDetails extends React.PureComponent<any, any> {
           </div>
           <div className='spacer'/>
           <div className={styles.close}>
-            <Button onClick={handleClose} color={'primary'} variant={'contained'}>
+            <Button onClick={handleClose} color={'secondary'} variant={'contained'}>
               Close
+            </Button>
+          </div>
+          <div className={'spacer'} />
+          <div className={styles.toggleFormat}>
+            <Button onClick={this.togglePriceFormat} color={'primary'} variant={'contained'}>
+              Toggle Price Format
             </Button>
           </div>
           <div className='spacer'/>
@@ -98,6 +105,16 @@ class EventDetails extends React.PureComponent<any, any> {
   private fetchMarketOutcomes = (market: any) => {
     this.props.getOutcomesForMarket(market);
   };
+
+  private togglePriceFormat = () => {
+    const {
+      priceFormat,
+      togglePriceFormat
+    } = this.props;
+    const newPriceFormat = priceFormat === 'fraction' ? 'decimal' : 'fraction';
+    localStorage.setItem('priceFormat', newPriceFormat);
+    togglePriceFormat(newPriceFormat);
+  }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch, ownProps: any) => {
@@ -108,25 +125,9 @@ const mapDispatchToProps = (dispatch: Dispatch, ownProps: any) => {
         id: ownProps.event.eventId
       }));
     },
-    // test: () => {
-    //   dispatch({
-    //     type: 'OUTCOME_STATUS',
-    //     data: {
-    //       eventId: 21249937,
-    //       marketId: 93648928,
-    //       outcomeId: 367527446,
-    //       // price: {
-    //       //   num: 999,
-    //       //   den: 888,
-    //       //   decimal: 5
-    //       // },
-    //       status: {
-    //         suspended: false,
-    //         displayable: true,
-    //       }
-    //     }
-    //   })
-    // },
+    togglePriceFormat: (fractionFormat: string) => {
+      dispatch(new TogglePriceFormatAction(fractionFormat))
+    },
     getOutcomesForMarket: (market: any) => {
       dispatch(new GetOutcomesAction(market));
     }
@@ -135,6 +136,7 @@ const mapDispatchToProps = (dispatch: Dispatch, ownProps: any) => {
 
 const mapStateToProps = (state: any, ownProps: any) => {
   return {
+    priceFormat: priceFormatSelector()(state),
   };
 };
 

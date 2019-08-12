@@ -12,5 +12,7 @@
 3. Run "yarn start"
 
 # Improvements
-*Add models for Event, Market and Outcome
+* Add models for Event, Market and Outcome
+* Add missing Betslip functionality
+* Declare interfaces for component props and state
 
